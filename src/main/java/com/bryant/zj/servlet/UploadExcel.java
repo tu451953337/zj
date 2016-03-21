@@ -16,6 +16,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 
+import com.bryant.zj.service.ExcelParser;
+import com.bryant.zj.service.ExcelParser2003;
 import com.bryant.zj.service.ExcelParser2007;
 
 public class UploadExcel extends HttpServlet {
@@ -51,10 +53,17 @@ public class UploadExcel extends HttpServlet {
 						req.getSession().setAttribute("title", titleArr);
 
 					} else {
-						ExcelParser2007 excelReader = new ExcelParser2007(inputStream);
+						String fileName = fileItemStream.getName();
+						ExcelParser excelReader = null;
+						if(fileName!=null && fileName.endsWith("xls")) {
+							excelReader = new ExcelParser2003();
+						} else if(fileName != null && fileName.endsWith("xlsx")) {
+							excelReader = new ExcelParser2007();
+						}
+						
 
 						System.out.println();
-						String[][] content = excelReader.readExcelContent();
+						String[][] content = excelReader.readExcelContent(inputStream);
 
 						System.out.println("获得Excel表格的内容:");
 						if (content.length > 0) {

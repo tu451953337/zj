@@ -52,7 +52,7 @@ public class SubServlet extends HttpServlet {
 	    		String filename = (String) req.getSession().getAttribute("filename") ;
 	        	String path = req.getSession().getServletContext().getRealPath("/") + "/" + filename;
 	        	//输出数据到指定文件
-				ExcelParser2007.write(getTitle(list), content, path);
+				new ExcelParser2007().write(getTitle(list), content, path);
 				//获取文件
 				File file = new File(path);
 				//设置response为excel
