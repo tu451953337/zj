@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.bryant.zj.model.ColumnTitleModel;
-import com.bryant.zj.service.ExcelParser2007;
+import com.bryant.zj.model.EnumExcelType;
+import com.bryant.zj.service.ExcelParserImpl;
 
 public class SubServlet extends HttpServlet {
 	private static final long serialVersionUID = 2823084223770197211L;
@@ -52,7 +53,7 @@ public class SubServlet extends HttpServlet {
 	    		String filename = (String) req.getSession().getAttribute("filename") ;
 	        	String path = req.getSession().getServletContext().getRealPath("/") + "/" + filename;
 	        	//输出数据到指定文件
-				new ExcelParser2007().write(getTitle(list), content, path);
+				new ExcelParserImpl().write(getTitle(list), content, path, EnumExcelType.EXCEL2007);
 				//获取文件
 				File file = new File(path);
 				//设置response为excel

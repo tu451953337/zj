@@ -17,8 +17,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 
 import com.bryant.zj.service.ExcelParser;
-import com.bryant.zj.service.ExcelParser2003;
-import com.bryant.zj.service.ExcelParser2007;
+import com.bryant.zj.service.ExcelParserImpl;
 
 public class UploadExcel extends HttpServlet {
 
@@ -54,13 +53,12 @@ public class UploadExcel extends HttpServlet {
 
 					} else {
 						String fileName = fileItemStream.getName();
-						ExcelParser excelReader = null;
-						if(fileName!=null && fileName.endsWith("xls")) {
-							excelReader = new ExcelParser2003();
-						} else if(fileName != null && fileName.endsWith("xlsx")) {
-							excelReader = new ExcelParser2007();
-						}
-						
+						ExcelParser excelReader = new ExcelParserImpl();
+//						if(fileName!=null && fileName.endsWith("xls")) {
+//							excelReader = new ExcelParser2003();
+//						} else if(fileName != null && fileName.endsWith("xlsx")) {
+//							excelReader = new ExcelParser2007();
+//						}
 
 						System.out.println();
 						String[][] content = excelReader.readExcelContent(inputStream);
@@ -98,7 +96,7 @@ public class UploadExcel extends HttpServlet {
 		} catch (FileNotFoundException e) {
 			System.out.println("未找到指定路径的文件!");
 			e.printStackTrace();
-		} catch (FileUploadException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

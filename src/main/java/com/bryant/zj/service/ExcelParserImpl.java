@@ -1,7 +1,6 @@
 package com.bryant.zj.service;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -9,20 +8,24 @@ import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public abstract class AbstractExcelParser implements ExcelParser {
+import com.bryant.zj.model.EnumExcelType;
+
+public class ExcelParserImpl implements ExcelParser {
 	protected Workbook wb;
 	
 	@Override
-	public String[] readExcelTitle(InputStream in) throws IOException {
+	public String[] readExcelTitle(InputStream in) throws Exception {
 		if(wb == null) {
-			wb = createReadWorkbook(in);
+			wb = WorkbookFactory.create(in);
 		}
 		Sheet sheet = wb.getSheetAt(0);
 		Row row = sheet.getRow(0);
@@ -38,9 +41,9 @@ public abstract class AbstractExcelParser implements ExcelParser {
 	}
 
 	@Override
-	public String[][] readExcelContent(InputStream in) throws IOException {
+	public String[][] readExcelContent(InputStream in) throws Exception {
 		if(wb == null) {
-			wb = createReadWorkbook(in);
+			wb = WorkbookFactory.create(in);
 		}
 		Sheet sheet = wb.getSheetAt(0);
         // 得到总行数
@@ -48,8 +51,8 @@ public abstract class AbstractExcelParser implements ExcelParser {
         Row row = sheet.getRow(0);
         int colNum = row.getPhysicalNumberOfCells();
         // 正文内容应该从第二行开始,第一行为表头的标题
-        String[][] content = new String[rowNum][colNum];
-        for (int i = 0; i < rowNum; i++) {
+        String[][] content = new String[rowNum+1][colNum];
+        for (int i = 0; i <= rowNum; i++) {
             row = sheet.getRow(i);
             int j = 0;
             while (j < colNum) {
@@ -179,9 +182,9 @@ public abstract class AbstractExcelParser implements ExcelParser {
 	}
 	
 	@Override
-	public void write(String[] title, String[][] content, String path) throws Exception{
+	public void write(String[] title, String[][] content, String path, EnumExcelType type) throws Exception{
 		// 第一步，创建一个workbook，对应一个Excel文件  
-		Workbook workbook = createWriteWorkbook();
+		Workbook workbook = type == EnumExcelType.EXCEL2003 ? new HSSFWorkbook() : new XSSFWorkbook();
 		
 		// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet 
 		Sheet sheet = workbook.createSheet("sheet");
@@ -189,8 +192,8 @@ public abstract class AbstractExcelParser implements ExcelParser {
 		// 第三步，创建标题行
 		//定义格式
 		CellStyle cellStyle = workbook.createCellStyle();
-		cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-		cellStyle.setVerticalAlignment(XSSFCellStyle.VERTICAL_CENTER);
+		cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 		
 		Row row = sheet.createRow(0);
 		Cell cell = null;
@@ -222,7 +225,4 @@ public abstract class AbstractExcelParser implements ExcelParser {
 		}
 	}
 	
-	protected abstract Workbook createWriteWorkbook();
-	
-	protected abstract Workbook createReadWorkbook(InputStream in) throws IOException;
 }

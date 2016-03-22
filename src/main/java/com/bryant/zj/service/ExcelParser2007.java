@@ -5,10 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelParser2007 extends AbstractExcelParser{
+import com.bryant.zj.model.EnumExcelType;
+
+public class ExcelParser2007 {
 
     public static void main(String[] args) {
         try {
@@ -16,7 +20,7 @@ public class ExcelParser2007 extends AbstractExcelParser{
         	String path="C:\\Users\\Administrator\\Documents\\repayment.xlsx";
             // 对读取Excel表格标题测试
             InputStream is = new FileInputStream(path);
-            ExcelParser excelReader = new ExcelParser2007();
+            ExcelParser excelReader = new ExcelParserImpl();
             String[] title = excelReader.readExcelTitle(is);
             System.out.println("获得Excel表格的标题:");
             for (String s : title) {
@@ -40,14 +44,4 @@ public class ExcelParser2007 extends AbstractExcelParser{
         	e.printStackTrace();
         }
     }
-
-	@Override
-	protected Workbook createWriteWorkbook() {
-		return new XSSFWorkbook();
-	}
-
-	@Override
-	protected Workbook createReadWorkbook(InputStream in) throws IOException {
-		return new XSSFWorkbook(in);
-	}
 }

@@ -7,14 +7,14 @@ import java.io.InputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class ExcelParser2003 extends AbstractExcelParser {
+public class ExcelParser2003 {
 
 	public static void main(String[] args) {
 		try {
 			String path="D:\\WorkspaceJingrongyun\\Code\\jinrongyun\\doc\\乾多多文档\\2015.7.24银行代码.xls";
 			// 对读取Excel表格标题测试
 			InputStream is = new FileInputStream(path);
-			ExcelParser excelReader = new ExcelParser2003();
+			ExcelParser excelReader = new ExcelParserImpl();
 			String[] title = excelReader.readExcelTitle(is);
 			System.out.println("获得Excel表格的标题:");
 			for (String s : title) {
@@ -37,13 +37,4 @@ public class ExcelParser2003 extends AbstractExcelParser {
 		}
 	}
 
-	@Override
-	protected Workbook createWriteWorkbook() {
-		return new HSSFWorkbook();
-	}
-
-	@Override
-	protected Workbook createReadWorkbook(InputStream in) throws IOException {
-		return new HSSFWorkbook(in);
-	}
 }
