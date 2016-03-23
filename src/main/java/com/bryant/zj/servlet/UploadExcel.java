@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
@@ -49,16 +48,10 @@ public class UploadExcel extends HttpServlet {
 							return;
 						}
 						readcol = titleArr.length;
-						req.getSession().setAttribute("title", titleArr);
+//						req.getSession().setAttribute("title", titleArr);
 
 					} else {
-						String fileName = fileItemStream.getName();
 						ExcelParser excelReader = new ExcelParserImpl();
-//						if(fileName!=null && fileName.endsWith("xls")) {
-//							excelReader = new ExcelParser2003();
-//						} else if(fileName != null && fileName.endsWith("xlsx")) {
-//							excelReader = new ExcelParser2007();
-//						}
 
 						System.out.println();
 						String[][] content = excelReader.readExcelContent(inputStream);

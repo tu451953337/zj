@@ -5,8 +5,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="js/layer/layer/layer.js"></script>
+<script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../js/layer/layer/layer.js"></script>
 <title>index</title>
 <!-- Javascript goes in the document HEAD -->
 <script type="text/javascript">
@@ -168,7 +168,7 @@ table.altrowstable td {
 				</c:forEach>
 			</tbody>
 		</table>
-		<form action="sub" method="post" name="subForm">
+		<form action="../sub" method="post" name="subForm">
 			<input name="data" type="hidden" />
 		</form>
 	</center>

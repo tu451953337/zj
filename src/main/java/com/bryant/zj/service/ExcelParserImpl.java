@@ -4,13 +4,13 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,13 +20,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.bryant.zj.model.EnumExcelType;
 
 public class ExcelParserImpl implements ExcelParser {
-	protected Workbook wb;
 	
 	@Override
 	public String[] readExcelTitle(InputStream in) throws Exception {
-		if(wb == null) {
-			wb = WorkbookFactory.create(in);
-		}
+		Workbook wb = WorkbookFactory.create(in);
 		Sheet sheet = wb.getSheetAt(0);
 		Row row = sheet.getRow(0);
 		// 标题总列数
@@ -34,7 +31,6 @@ public class ExcelParserImpl implements ExcelParser {
 		System.out.println("colNum:" + colNum);
 		String[] title = new String[colNum];
 		for (int i = 0; i < colNum; i++) {
-			// title[i] = getStringCellValue(row.getCell((short) i));
 			title[i] = getCellFormatValue(row.getCell((short) i));
 		}
 		return title;
@@ -42,9 +38,7 @@ public class ExcelParserImpl implements ExcelParser {
 
 	@Override
 	public String[][] readExcelContent(InputStream in) throws Exception {
-		if(wb == null) {
-			wb = WorkbookFactory.create(in);
-		}
+		Workbook wb = WorkbookFactory.create(in);
 		Sheet sheet = wb.getSheetAt(0);
         // 得到总行数
         int rowNum = sheet.getLastRowNum();
@@ -79,10 +73,10 @@ public class ExcelParserImpl implements ExcelParser {
 			// 判断当前Cell的Type
 			switch (cell.getCellType()) {
 			// 如果当前Cell的Type为NUMERIC
-			case HSSFCell.CELL_TYPE_NUMERIC:
-			case HSSFCell.CELL_TYPE_FORMULA: {
+			case Cell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_FORMULA: {
 				// 判断当前的cell是否为Date
-				if (HSSFDateUtil.isCellDateFormatted(cell)) {
+				if (DateUtil.isCellDateFormatted(cell)) {
 					// 如果是Date类型则，转化为Data格式
 
 					// 方法1：这样子的data格式是带时分秒的：2011-10-12 0:00:00
@@ -102,7 +96,7 @@ public class ExcelParserImpl implements ExcelParser {
 				break;
 			}
 			// 如果当前Cell的Type为STRIN
-			case HSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_STRING:
 				// 取得当前的Cell字符串
 				cellvalue = cell.getRichStringCellValue().getString();
 				break;
@@ -124,18 +118,20 @@ public class ExcelParserImpl implements ExcelParser {
 	 *            Excel单元格
 	 * @return String 单元格数据内容
 	 */
+	@SuppressWarnings("unused")
 	private String getDateCellValue(Cell cell) {
 		String result = "";
 		try {
 			int cellType = cell.getCellType();
-			if (cellType == HSSFCell.CELL_TYPE_NUMERIC) {
-				Date date = cell.getDateCellValue();
-				result = (date.getYear() + 1900) + "-" + (date.getMonth() + 1)
-						+ "-" + date.getDate();
-			} else if (cellType == HSSFCell.CELL_TYPE_STRING) {
+			if (cellType == Cell.CELL_TYPE_NUMERIC) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime( cell.getDateCellValue());
+				result = (calendar.get(Calendar.YEAR)) + "-" + (calendar.get(Calendar.MONTH) + 1)
+						+ "-" + calendar.get(Calendar.DATE);
+			} else if (cellType == Cell.CELL_TYPE_STRING) {
 				String date = getStringCellValue(cell);
 				result = date.replaceAll("[年月]", "-").replace("日", "").trim();
-			} else if (cellType == HSSFCell.CELL_TYPE_BLANK) {
+			} else if (cellType == Cell.CELL_TYPE_BLANK) {
 				result = "";
 			}
 		} catch (Exception e) {
@@ -158,16 +154,16 @@ public class ExcelParserImpl implements ExcelParser {
 		}
 		String strCell = "";
 		switch (cell.getCellType()) {
-		case HSSFCell.CELL_TYPE_STRING:
+		case Cell.CELL_TYPE_STRING:
 			strCell = cell.getStringCellValue();
 			break;
-		case HSSFCell.CELL_TYPE_NUMERIC:
+		case Cell.CELL_TYPE_NUMERIC:
 			strCell = String.valueOf(cell.getNumericCellValue());
 			break;
-		case HSSFCell.CELL_TYPE_BOOLEAN:
+		case Cell.CELL_TYPE_BOOLEAN:
 			strCell = String.valueOf(cell.getBooleanCellValue());
 			break;
-		case HSSFCell.CELL_TYPE_BLANK:
+		case Cell.CELL_TYPE_BLANK:
 			strCell = "";
 			break;
 		default:
